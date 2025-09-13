@@ -120,7 +120,7 @@ venv.bak/
 
 # UV specific
 .uv-cache/
-uv.lock
+# Note: uv.lock should be committed for reproducible builds
 
 # =============================================================================
 # Machine Learning & Deep Learning

@@ -73,8 +73,8 @@ dependencies = [
     "setuptools==72.1.0",
     
     # Advanced ML Tools (from new modules)
-    "pytorch-grad-cam>=1.4.0",
-    "pythonjsonlogger>=2.0.0",
+    "grad-cam>=1.4.0",
+    "python-json-logger>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -113,6 +113,12 @@ test = [
     "pytest-cov>=4.0.0",
     "pytest-mock>=3.10.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/your-org/cifar10-production-pipeline"
+Documentation = "https://github.com/your-org/cifar10-production-pipeline#readme"
+Repository = "https://github.com/your-org/cifar10-production-pipeline.git"
+Issues = "https://github.com/your-org/cifar10-production-pipeline/issues"
 
 [project.scripts]
 cifar10-train = "src.pipeline:main"
