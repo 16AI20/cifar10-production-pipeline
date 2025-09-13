@@ -1,0 +1,143 @@
+# Transform Configuration for CIFAR-10 Project
+# This file defines augmentation strategies and preprocessing settings
+
+# Dataset statistics for normalization
+dataset_stats:
+  imagenet:
+    mean: [0.485, 0.456, 0.406]
+    std: [0.229, 0.224, 0.225]
+  cifar10:
+    mean: [0.4914, 0.4822, 0.4465]
+    std: [0.2023, 0.1994, 0.2010]
+
+# Input sizes for different model families
+input_sizes:
+  pretrained_cnn: 224
+  custom_cnn: 32
+  vit: 224
+
+# Base augmentation strategies
+augmentation_strategies:
+  basic:
+    random_crop:
+      enabled: true
+      padding: 4
+    random_horizontal_flip:
+      enabled: true
+      p: 0.5
+    color_jitter:
+      enabled: true
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+      hue: 0.02
+    random_rotation:
+      enabled: true
+      degrees: 10
+    random_erasing:
+      enabled: true
+      p: 0.2
+      scale: [0.02, 0.33]
+      ratio: [0.3, 3.3]
+
+  moderate:
+    random_crop:
+      enabled: true
+      padding: 6
+    random_horizontal_flip:
+      enabled: true
+      p: 0.5
+    color_jitter:
+      enabled: true
+      brightness: 0.3
+      contrast: 0.3
+      saturation: 0.3
+      hue: 0.05
+    random_rotation:
+      enabled: true
+      degrees: 15
+    random_affine:
+      enabled: true
+      degrees: 0
+      translate: [0.1, 0.1]
+      scale: [0.9, 1.1]
+      shear: 5
+    random_erasing:
+      enabled: true
+      p: 0.3
+      scale: [0.02, 0.4]
+      ratio: [0.3, 3.3]
+
+  aggressive:
+    random_crop:
+      enabled: true
+      padding: 8
+    random_horizontal_flip:
+      enabled: true
+      p: 0.5
+    color_jitter:
+      enabled: true
+      brightness: 0.4
+      contrast: 0.4
+      saturation: 0.4
+      hue: 0.1
+    random_rotation:
+      enabled: true
+      degrees: 20
+    random_affine:
+      enabled: true
+      degrees: 0
+      translate: [0.15, 0.15]
+      scale: [0.8, 1.2]
+      shear: 10
+    random_erasing:
+      enabled: true
+      p: 0.5
+      scale: [0.02, 0.5]
+      ratio: [0.3, 3.3]
+    gaussian_blur:
+      enabled: true
+      kernel_size: [3, 5]
+      sigma: [0.1, 2.0]
+      p: 0.2
+
+  # Advanced augmentation strategies
+  cutmix:
+    enabled: false  # Enable when advanced augmentations are implemented
+    alpha: 1.0
+    cutmix_prob: 0.5
+
+  mixup:
+    enabled: false  # Enable when advanced augmentations are implemented
+    alpha: 0.2
+    mixup_prob: 0.5
+
+  randaugment:
+    enabled: false  # Enable when advanced augmentations are implemented
+    num_ops: 2
+    magnitude: 10
+    magnitude_std: 0.5
+
+# Model-specific transform configurations
+model_configs:
+  resnet:
+    dataset_stats: imagenet
+    input_size: pretrained_cnn
+    augmentation_strategy: basic
+  
+  efficientnet:
+    dataset_stats: imagenet
+    input_size: pretrained_cnn
+    augmentation_strategy: moderate
+    
+  vit:
+    dataset_stats: imagenet
+    input_size: vit
+    augmentation_strategy: moderate
+
+# Validation settings
+validation:
+  check_input_range: true
+  expected_range: [0, 1]  # After ToTensor transformation
+  check_normalization: true
+  tolerance: 0.1  # Tolerance for mean/std validation

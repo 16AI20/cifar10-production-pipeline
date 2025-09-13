@@ -1,0 +1,41 @@
+defaults:
+  - _self_
+  - model_cfg: resnet  # or efficientnet, vit
+
+# Global experiment setup
+seed: 42
+val_ratio: 0.1
+resume: false
+exp_name: cifar10
+
+# MLflow logging
+mlflow:
+  tracking_uri: <MLFLOW_TRACKING_URI>
+  autolog: true
+  setup: true
+  artifact_uri: null  # Optional: can be filled after run if needed
+
+# Directory paths
+paths:
+  data_dir: data/cifar-10-batches-py
+  models_dir: models
+  images_dir: images  
+  logs_dir: logs
+  conf_dir: conf
+
+# Checkpointing
+checkpoint:
+  dir: ${paths.models_dir}/
+
+# Learning rate scheduler
+scheduler:
+  mode: min
+  patience: 3
+  factor: 0.5
+  monitor: validation_loss  # Optional, if using more advanced schedulers
+
+mode: train  # or sweep
+
+logging:
+  config: ${paths.conf_dir}/logging.yaml
+  artifact_dir: ${paths.logs_dir}

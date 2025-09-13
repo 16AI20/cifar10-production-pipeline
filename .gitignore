@@ -1,0 +1,244 @@
+# =============================================================================
+# Operating System Files
+# =============================================================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE_BIN/
+
+# Linux
+.fuse_hidden*
+
+# =============================================================================
+# Temporary and Backup Files
+# =============================================================================
+# Temporary files
+*.tmp
+*.temp
+*~
+.#*
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Compressed archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# =============================================================================
+# Python
+# =============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# =============================================================================
+# Virtual Environments
+# =============================================================================
+.env
+.env.local
+.env.*.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# UV specific
+.uv-cache/
+uv.lock
+
+# =============================================================================
+# Machine Learning & Deep Learning
+# =============================================================================
+# Datasets and data directories
+data/
+datasets/
+raw_data/
+processed_data/
+
+# Model files and checkpoints
+models/
+model/
+checkpoints/
+*.pth
+*.pt
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# MLflow tracking
+mlruns/
+mlartifacts/
+
+# Hydra outputs
+outputs/
+multirun/
+
+# Training artifacts
+logs/
+runs/
+wandb/
+tensorboard/
+artifacts/
+
+# Experiment results
+results/
+experiments/
+
+# =============================================================================
+# Jupyter Notebooks
+# =============================================================================
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# =============================================================================
+# IDEs and Editors
+# =============================================================================
+# VS Code
+.vscode/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# PyCharm / IntelliJ
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Spyder
+.spyderproject
+.spyproject
+
+# Rope
+.ropeproject
+
+# R Studio
+.Rproj
+
+# Vim
+*.swp
+*.swo
+
+# =============================================================================
+# Documentation
+# =============================================================================
+# Sphinx documentation
+docs/_build/
+
+# mkdocs documentation
+/site
+
+# =============================================================================
+# Web Framework Specific (if applicable)
+# =============================================================================
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# =============================================================================
+# Security and Secrets
+# =============================================================================
+# Configuration files that might contain secrets
+config/local/
+*.secret
+*.key
+*.pem
+*.p12
+
+# Environment files with sensitive data
+.env.production
+.env.staging
+
+# =============================================================================
+# Project Specific
+# =============================================================================
+# Commented out specific files - uncomment if needed
+# convert.py
+# set_key.sh

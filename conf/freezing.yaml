@@ -1,0 +1,139 @@
+# Layer Freezing Configuration for CIFAR-10 Project
+# This file defines different freezing strategies for transfer learning
+
+# Available strategies:
+# - none: No freezing, all layers trainable
+# - full_freeze: Freeze all except classifier
+# - partial_freeze: Freeze based on patterns
+# - progressive: Progressive unfreezing during training
+# - layer_wise_lr: Different learning rates per layer group
+
+# Default strategy (can be overridden per model)
+default:
+  strategy: "full_freeze"
+  freeze_bn: true
+  monitor_gradients: true
+
+# Model-specific freezing configurations
+resnet:
+  strategy: "progressive"
+  progressive_schedule:
+    - epoch: 5
+      patterns: ["^layer4"]
+    - epoch: 10  
+      patterns: ["^layer3"]
+    - epoch: 15
+      patterns: ["^layer2"]
+    - epoch: 20
+      patterns: ["^layer1"]
+  freeze_bn: true
+  monitor_gradients: true
+
+efficientnet:
+  strategy: "layer_wise_lr"
+  layer_lr_multipliers:
+    "^features\\.[0-2]": 0.1      # Early features - very low LR
+    "^features\\.[3-5]": 0.3      # Mid features
+    "^features\\.[6-9]": 0.5      # Later features  
+    "^features\\.[1-9][0-9]": 0.8 # Final features
+    "^(classifier|fc)": 1.0       # Classifier - full LR
+  freeze_bn: true
+  monitor_gradients: true
+
+vit:
+  strategy: "partial_freeze"
+  freeze_patterns:
+    - "^patch_embed"              # Patch embedding
+    - "^pos_embed"                # Positional embedding
+    - "^blocks\\.[0-5]"           # First half of transformer blocks
+  unfreeze_patterns:
+    - "^blocks\\.[6-9]"           # Later transformer blocks
+    - "^blocks\\.1[0-1]"          # Final transformer blocks
+    - "^(head|classifier)"        # Classification head
+  freeze_bn: true
+  monitor_gradients: true
+
+# Preset configurations for different scenarios
+presets:
+  # Conservative fine-tuning
+  conservative:
+    strategy: "full_freeze"
+    freeze_bn: true
+    monitor_gradients: true
+
+  # Aggressive fine-tuning (all layers trainable)
+  aggressive:
+    strategy: "none"
+    freeze_bn: false
+    monitor_gradients: true
+
+  # Gradual unfreezing for ResNet
+  gradual_resnet:
+    strategy: "progressive"
+    progressive_schedule:
+      - epoch: 3
+        patterns: ["^layer4"]
+      - epoch: 6
+        patterns: ["^layer3"]
+      - epoch: 9
+        patterns: ["^layer2"]
+      - epoch: 12
+        patterns: ["^layer1"]
+      - epoch: 15
+        patterns: ["^(conv1|bn1)"]
+    freeze_bn: true
+    monitor_gradients: true
+
+  # Layer-wise learning rates for deep fine-tuning  
+  layered_learning:
+    strategy: "layer_wise_lr"
+    layer_lr_multipliers:
+      # Backbone layers get progressively higher LR
+      "^(conv1|bn1)": 0.05
+      "^layer1": 0.1
+      "^layer2": 0.2
+      "^layer3": 0.5
+      "^layer4": 0.8
+      # Classifier gets full LR
+      "^(fc|classifier|head)": 1.0
+    freeze_bn: false
+    monitor_gradients: true
+
+  # Minimal freezing - only freeze very early layers
+  minimal_freeze:
+    strategy: "partial_freeze"
+    freeze_patterns:
+      - "^(conv1|bn1)"             # Only freeze stem
+    freeze_bn: true
+    monitor_gradients: true
+
+# Experimental configurations
+experimental:
+  # Freeze attention but train MLP in Vision Transformers
+  vit_attn_freeze:
+    strategy: "partial_freeze"
+    freeze_patterns:
+      - "^blocks\\.[0-9]+\\.attn"  # Freeze all attention layers
+      - "^patch_embed"
+      - "^pos_embed"
+    unfreeze_patterns:
+      - "^blocks\\.[0-9]+\\.mlp"   # Train MLP layers
+      - "^blocks\\.[0-9]+\\.norm"  # Train layer norms
+      - "^(head|classifier)"       # Train classifier
+    freeze_bn: true
+    monitor_gradients: true
+
+  # Progressive with different timing
+  fast_progressive:
+    strategy: "progressive"
+    progressive_schedule:
+      - epoch: 2
+        patterns: ["^layer4", "^features\\.[1-9][0-9]"]
+      - epoch: 4
+        patterns: ["^layer3", "^features\\.[6-9]"]
+      - epoch: 6
+        patterns: ["^layer2", "^features\\.[3-5]"]
+      - epoch: 8
+        patterns: ["^layer1", "^features\\.[0-2]"]
+    freeze_bn: true
+    monitor_gradients: true

@@ -1,0 +1,289 @@
+optuna:
+  n_trials: 50
+  direction: minimize
+  timeout: 3600  # 1 hour timeout
+  
+  # Pruning configuration
+  pruning:
+    enabled: true
+    n_startup_trials: 5
+    n_warmup_steps: 5
+    interval_steps: 1
+
+  # Sampler configuration
+  sampler:
+    type: "TPE"  # Tree-structured Parzen Estimator
+    # Alternative: "CmaEs", "Random", "Grid"
+
+  # Enhanced search space
+  search_space:
+    # Model architecture
+    model_type:
+      type: categorical
+      choices: ["resnet", "efficientnet", "vit"]
+
+    # Learning rate optimization
+    lr:
+      type: loguniform
+      low: 1e-5
+      high: 1e-2
+
+    # Batch size optimization
+    batch_size:
+      type: categorical
+      choices: [16, 32, 64, 128]
+
+    # Optimizer selection
+    optimizer:
+      type: categorical
+      choices: ["adam", "adamw", "sgd", "rmsprop"]
+
+    # Weight decay
+    weight_decay:
+      type: loguniform
+      low: 1e-6
+      high: 1e-2
+
+    # Learning rate scheduler
+    scheduler_type:
+      type: categorical
+      choices: ["step", "cosine", "plateau", "cyclic"]
+
+    # Scheduler-specific parameters
+    scheduler_patience:
+      type: int
+      low: 3
+      high: 10
+      condition: "scheduler_type == 'plateau'"
+
+    scheduler_step_size:
+      type: int
+      low: 5
+      high: 15
+      condition: "scheduler_type == 'step'"
+
+    scheduler_gamma:
+      type: uniform
+      low: 0.1
+      high: 0.8
+      condition: "scheduler_type in ['step', 'plateau']"
+
+    # Data augmentation parameters
+    augmentation_strategy:
+      type: categorical
+      choices: ["basic", "moderate", "aggressive"]
+
+    # Advanced augmentation toggles
+    use_mixup:
+      type: categorical
+      choices: [true, false]
+
+    mixup_alpha:
+      type: uniform
+      low: 0.1
+      high: 1.0
+      condition: "use_mixup == true"
+
+    use_cutmix:
+      type: categorical
+      choices: [true, false]
+
+    cutmix_alpha:
+      type: uniform
+      low: 0.5
+      high: 1.5
+      condition: "use_cutmix == true"
+
+    # Dropout and regularization
+    dropout_rate:
+      type: uniform
+      low: 0.0
+      high: 0.5
+
+    # Label smoothing
+    label_smoothing:
+      type: uniform
+      low: 0.0
+      high: 0.2
+
+    # Layer freezing strategy
+    freezing_strategy:
+      type: categorical
+      choices: ["none", "full_freeze", "progressive", "layer_wise_lr"]
+
+    # Progressive unfreezing schedule (for progressive strategy)
+    progressive_unfreeze_epochs:
+      type: categorical
+      choices: [[5, 10, 15], [3, 6, 9, 12], [2, 4, 8, 16]]
+      condition: "freezing_strategy == 'progressive'"
+
+    # Training dynamics
+    early_stopping_patience:
+      type: int
+      low: 5
+      high: 20
+
+    # Model-specific hyperparameters
+    # ResNet specific
+    resnet_block_dropout:
+      type: uniform
+      low: 0.0
+      high: 0.3
+      condition: "model_type == 'resnet'"
+
+    # EfficientNet specific  
+    efficientnet_dropout:
+      type: uniform
+      low: 0.0
+      high: 0.5
+      condition: "model_type == 'efficientnet'"
+
+    efficientnet_drop_connect:
+      type: uniform
+      low: 0.0
+      high: 0.3
+      condition: "model_type == 'efficientnet'"
+
+    # ViT specific
+    vit_attention_dropout:
+      type: uniform
+      low: 0.0
+      high: 0.3
+      condition: "model_type == 'vit'"
+
+    vit_mlp_dropout:
+      type: uniform
+      low: 0.0
+      high: 0.4
+      condition: "model_type == 'vit'"
+
+# Optuna study configuration for different objectives
+objectives:
+  # Single objective optimization
+  single:
+    metric: "validation_loss"
+    direction: "minimize"
+
+  # Multi-objective optimization
+  multi:
+    objectives:
+      - metric: "validation_loss"
+        direction: "minimize"
+        weight: 0.7
+      - metric: "model_size"
+        direction: "minimize"
+        weight: 0.2
+      - metric: "inference_time"
+        direction: "minimize"
+        weight: 0.1
+
+# Predefined search space presets for different scenarios
+presets:
+  # Quick search for initial exploration
+  quick:
+    n_trials: 20
+    search_space:
+      model_type:
+        type: categorical
+        choices: ["resnet", "efficientnet"]
+      lr:
+        type: loguniform
+        low: 1e-4
+        high: 1e-2
+      batch_size:
+        type: categorical
+        choices: [32, 64]
+      optimizer:
+        type: categorical
+        choices: ["adamw", "sgd"]
+
+  # Comprehensive search
+  comprehensive:
+    n_trials: 100
+    # Uses full search space defined above
+
+  # Architecture-focused search
+  architecture_focus:
+    n_trials: 50
+    search_space:
+      model_type:
+        type: categorical
+        choices: ["resnet", "efficientnet", "vit"]
+      # Fixed reasonable defaults for other params
+      lr: 
+        value: 0.001
+      batch_size:
+        value: 64
+      optimizer:
+        value: "adamw"
+
+  # Augmentation-focused search
+  augmentation_focus:
+    n_trials: 30
+    search_space:
+      # Fixed model
+      model_type:
+        value: "resnet"
+      # Focus on augmentation params
+      augmentation_strategy:
+        type: categorical
+        choices: ["basic", "moderate", "aggressive"]
+      use_mixup:
+        type: categorical
+        choices: [true, false]
+      use_cutmix:
+        type: categorical
+        choices: [true, false]
+      mixup_alpha:
+        type: uniform
+        low: 0.1
+        high: 1.0
+      cutmix_alpha:
+        type: uniform
+        low: 0.5
+        high: 1.5
+
+  # Optimizer-focused search
+  optimizer_focus:
+    n_trials: 40
+    search_space:
+      # Fixed model
+      model_type:
+        value: "efficientnet"
+      # Focus on optimization params
+      optimizer:
+        type: categorical
+        choices: ["adam", "adamw", "sgd", "rmsprop"]
+      lr:
+        type: loguniform
+        low: 1e-5
+        high: 1e-2
+      weight_decay:
+        type: loguniform
+        low: 1e-6
+        high: 1e-2
+      scheduler_type:
+        type: categorical
+        choices: ["step", "cosine", "plateau"]
+
+# Advanced optimization settings
+advanced:
+  # Conditional parameter sampling
+  conditional_params:
+    enabled: true
+    
+  # Multi-fidelity optimization (early stopping based on partial results)
+  multi_fidelity:
+    enabled: true
+    min_epochs: 5
+    max_epochs: 25
+    
+  # Ensemble-based optimization
+  ensemble:
+    enabled: false
+    n_models: 3
+    
+  # Cross-validation during optimization
+  cross_validation:
+    enabled: false
+    n_folds: 3

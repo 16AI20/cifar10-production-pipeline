@@ -1,0 +1,247 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cifar10-production-pipeline"
+version = "1.0.0"
+description = "Production-ready CIFAR-10 image classification pipeline with advanced ML engineering practices"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "CIFAR-10 Project Team"}
+]
+maintainers = [
+    {name = "CIFAR-10 Project Team"}
+]
+keywords = [
+    "machine-learning",
+    "computer-vision", 
+    "image-classification",
+    "cifar10",
+    "pytorch",
+    "deep-learning",
+    "transfer-learning",
+    "mlops"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+requires-python = ">=3.10,<3.12"
+
+dependencies = [
+    # Core Deep Learning
+    "torch==2.5.1",
+    "torchvision==0.20.1", 
+    "timm==1.0.16",
+    
+    # Optimization
+    "optuna==4.4.0",
+    
+    # Data & ML Utilities
+    "numpy==2.2.5",
+    "pandas==2.2.3",
+    "scikit-learn==1.6.1",
+    
+    # Visualization
+    "matplotlib==3.10.0",
+    "seaborn==0.13.2",
+    
+    # Progress Bar
+    "tqdm==4.67.1",
+    
+    # Config & Experiment Management
+    "PyYAML==6.0.2",
+    "hydra-core==1.3.2",
+    "omegaconf==2.3.0",
+    "mlflow==2.18.0",
+    "python-dotenv==1.1.0",
+    
+    # Image Processing
+    "opencv-python==4.11.0.86",
+    
+    # Additional Utilities
+    "joblib==1.4.2",
+    "setuptools==72.1.0",
+    
+    # Advanced ML Tools (from new modules)
+    "pytorch-grad-cam>=1.4.0",
+    "pythonjsonlogger>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    # Testing
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+    
+    # Code Quality
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    
+    # Security
+    "safety>=2.3.0",
+    "bandit>=1.7.0",
+    
+    # Documentation
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.2.0",
+    
+    # Jupyter
+    "jupyter>=1.0.0",
+    "ipykernel>=6.0.0",
+]
+
+docs = [
+    "sphinx>=5.0.0",
+    "sphinx-rtd-theme>=1.2.0",
+    "myst-parser>=1.0.0",
+]
+
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-mock>=3.10.0",
+]
+
+[project.scripts]
+cifar10-train = "src.pipeline:main"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0", 
+    "pytest-mock>=3.10.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "safety>=2.3.0",
+    "bandit>=1.7.0",
+    "jupyter>=1.0.0",
+    "ipykernel>=6.0.0",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+# isort configuration is now handled by ruff
+# [tool.isort] - removed in favor of ruff
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+]
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101", "B601"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [
+    ".eggs",
+    ".git", 
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

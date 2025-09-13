@@ -1,0 +1,8 @@
+model_type: efficientnet
+batch_size: 64
+lr: 0.0001
+epochs: 10
+patience: 4
+run_name: efficientnet-cifar10
+registered_model_name: efficientnet-cifar10
+pretrained: true
